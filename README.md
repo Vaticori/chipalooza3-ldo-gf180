@@ -12,10 +12,11 @@ analog supply out.
 |---|---|---|---|
 | `VIN` | in | analog  | 5.0V analog supply input |
 | `VOUT` | out | analog  | Regulated 3.3V analog output |
-| `EN` | in | digital | Enables/disables regulator |
+| `EN` | in | digital (3.3V logic) | Enables/disables regulator (high = on) |
 | `FB_BUF` | out | analog | Buffered tap of the feedback node. |
 | `EAOUT_BUF` | out | analog |Buffered error amplifier output (pass transistor gate). |
 | `VREF` | in | external resource | Chipalooza's shared bandgap-reference bias voltage.|
+| `VSS` | inout | ground | Ground |
 
 
 
@@ -65,3 +66,85 @@ Provides a locally-regulated, low-noise 3.3V rail, isolated from the noise on th
 6. **Quiescent current.**
    - Set `EN` high, `VIN` at 5.0V, and load current at 0 mA (no load).
    - Measure current drawn from `VIN`
+
+
+---
+
+## 6. Status
+
+Schematic design and pre-layout simulation are complete; all target
+specifications are met in simulation at the typical corner and across
+process corners (tt/ff/ss/fs/sf) from -40 C to 110 C. Layout, DRC/LVS
+sign-off and post-layout verification have not started yet.
+
+## 7. Harness Resources Required
+
+| Resource | Use |
+|---|---|
+| 5.0V analog supply | `VIN` (supply and pass-device input) |
+| Ground | `VSS` |
+| Bandgap-referenced bias voltage | `VREF` (1.2V assumed in simulation) |
+| 1 digital control (3.3V) | `EN` |
+| Analog output pin | `VOUT` (for measuring regulation under external load) |
+| 2 shared analog lines | `FB_BUF`, `EAOUT_BUF` test outputs |
+| Bandgap-referenced current sources | none (biasing is internal) |
+
+All transistors are 5V devices (`nfet_05v0` / `pfet_05v0`), matching the 5.0V
+`VIN` domain. `EN` comes from the harness's 3.3V logic, so it passes through an
+internal 3.3V-to-`VIN` level shifter (`xschem/ldo_levelshift.sch`).
+
+## 8. Simulation Results (schematic, pre-layout)
+
+Typical corner, 27 C, `VIN` = 5.0V, `VREF` = 1.2V, `EN` = 3.3V. Full results,
+plots and the process/temperature corner table are in
+[`simulations/results/summary.md`](simulations/results/summary.md).
+
+| Parameter | Spec | Simulated |
+|---|---|---|
+| Output voltage (5 mA) | 3.201V - 3.399V | 3.309V |
+| Dropout voltage (10 mA) | max 300 mV | 152 mV (262 mV worst corner) |
+| Quiescent current | max 100 uA | 72 uA (82 uA worst corner) |
+| Line regulation | max 1% | 0.042% |
+| Load regulation | max 1% | 0.270% (0.523% worst corner) |
+| PSRR (low frequency) | min 40 dB | 59 dB at 100 Hz (54 dB worst corner) |
+
+## 9. Repository Layout
+
+| Path | Contents |
+|---|---|
+| `xschem/ldo.sch`, `ldo.sym` | LDO IP block schematic and symbol |
+| `xschem/ldo_levelshift.sch`, `.sym` | 3.3V-to-`VIN` level shifter for `EN` |
+| `simulations/tb_*.sch` | One xschem testbench per test in the test plan |
+| `simulations/run_sims.py` | Runs all testbenches, plots results, checks against spec |
+| `simulations/results/` | Result plots and summary table |
+| `netlist/schematic/ldo.spice` | Exported schematic netlist |
+
+## 10. Reproducing the Results
+
+Requires [xschem](https://xschem.sourceforge.io/), [ngspice](https://ngspice.sourceforge.io/),
+the gf180mcuD PDK with `PDK_ROOT` set, and Python 3 with numpy and matplotlib
+(all included in [IIC-OSIC-TOOLS](https://github.com/iic-jku/IIC-OSIC-TOOLS)).
+
+```sh
+cd simulations
+python3 run_sims.py --corners
+```
+
+Testbenches can also be opened and simulated individually in xschem
+(`cd simulations && xschem tb_line_reg.sch`). Schematics reference only files
+in this repository or in the PDK via `$PDK_ROOT`.
+
+## 11. Open Items
+
+- Replace ideal resistors (`Rref`, `RrefFB`, `RrefEA`, `R1`, `R2`) and the
+  compensation capacitor `Cc` with GF180MCU poly resistors and a MIM capacitor
+  before layout.
+- Add an AC loop-gain / phase-margin testbench across corners (current
+  stability evidence: load- and line-step transients).
+- Load-step overshoot (+311 mV for a 0-10 mA step in 1 us) is not yet
+  specified; decide on a transient spec or reduce it.
+- Layout in the harness slot (template TBD), DRC/LVS, post-layout PVT.
+
+## 12. License
+
+Apache License 2.0, see [LICENSE](LICENSE).

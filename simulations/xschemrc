@@ -1,0 +1,6 @@
+# Load the GF180MCU PDK xschem setup (device symbols, model paths) via $PDK_ROOT
+source $env(PDK_ROOT)/gf180mcuD/libs.tech/xschem/xschemrc
+# Make the LDO IP block symbol (../xschem/ldo.sym) visible to the testbenches
+append XSCHEM_LIBRARY_PATH :[file dirname [file normalize [info script]]]/../xschem
+# Netlists and simulation output stay inside simulations/
+set netlist_dir [file dirname [file normalize [info script]]]/run

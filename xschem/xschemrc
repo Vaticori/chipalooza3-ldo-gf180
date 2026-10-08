@@ -1,0 +1,4 @@
+# Load the GF180MCU PDK xschem setup (device symbols, model paths) via $PDK_ROOT
+source $env(PDK_ROOT)/gf180mcuD/libs.tech/xschem/xschemrc
+# Make this IP block's own symbols visible
+append XSCHEM_LIBRARY_PATH :[file dirname [file normalize [info script]]]

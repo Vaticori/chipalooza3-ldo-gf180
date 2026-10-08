@@ -1,4 +1,5 @@
 # simulation output (regenerable)
+simulations/run/
 *.raw
 *.log
 

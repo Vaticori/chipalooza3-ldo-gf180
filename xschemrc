@@ -1,2 +1,0 @@
-# Project-local xschem config: force GF180MCU PDK library regardless of $env(PDK)
-source $env(PDK_ROOT)/gf180mcuD/libs.tech/xschem/xschemrc
