@@ -65,12 +65,13 @@ N 3040 -1430 3340 -1430 {lab=ENB_5V}
 N 3030 -1430 3040 -1430 {lab=ENB_5V}
 N 3620 -920 3790 -920 {lab=VOUT}
 C {devices/title.sym} 160 90 0 0 {name=l1 author="Capless LDO, 5.0V to 3.3V (GF180MCU)"}
-C {devices/res.sym} 2500 -740 0 0 {name=Rref
-value=200k
-footprint=1206
-device=resistor
-m=1
-}
+C {symbols/ppolyf_u_2k_6p0.sym} 2500 -740 0 0 {name=Rref
+W=1e-6
+L=95.59e-6
+model=ppolyf_u_2k_6p0
+spiceprefix=X
+m=1}
+C {devices/lab_pin.sym} 2480 -740 0 0 {name=lbRref sig_type=std_logic lab=VSS}
 C {symbols/nfet_05v0.sym} 2520 -650 2 0 {name=MREF
 L=0.6u
 W=5u
@@ -132,12 +133,13 @@ spiceprefix=X
 }
 C {devices/lab_pin.sym} 3790 -860 0 0 {name=lendcs sig_type=std_logic lab=VSS}
 C {devices/lab_pin.sym} 3790 -890 2 0 {name=lendcb sig_type=std_logic lab=VSS}
-C {devices/res.sym} 1710 -870 0 0 {name=RrefFB
-value=1MEG
-footprint=1206
-device=resistor
-m=1
-}
+C {symbols/ppolyf_u_2k_6p0.sym} 1710 -870 0 0 {name=RrefFB
+W=1e-6
+L=957.9e-6
+model=ppolyf_u_2k_6p0
+spiceprefix=X
+m=1}
+C {devices/lab_pin.sym} 1690 -870 0 0 {name=lbRrefFB sig_type=std_logic lab=VSS}
 C {devices/lab_pin.sym} 1820 -900 1 0 {name=lrreffbp sig_type=std_logic lab=VIN}
 C {symbols/nfet_05v0.sym} 1730 -720 2 0 {name=MREFFB
 L=0.6u
@@ -188,12 +190,13 @@ spiceprefix=X
 C {devices/lab_pin.sym} 1930 -780 2 0 {name=lbiasfbd sig_type=std_logic lab=FB_BUF}
 C {devices/lab_pin.sym} 1930 -690 0 0 {name=lbiasfbs sig_type=std_logic lab=VSS}
 C {devices/lab_pin.sym} 1930 -720 0 0 {name=lbiasfbb sig_type=std_logic lab=VSS}
-C {devices/res.sym} 1720 -1180 0 0 {name=RrefEA
-value=1MEG
-footprint=1206
-device=resistor
-m=1
-}
+C {symbols/ppolyf_u_2k_6p0.sym} 1720 -1180 0 0 {name=RrefEA
+W=1e-6
+L=957.9e-6
+model=ppolyf_u_2k_6p0
+spiceprefix=X
+m=1}
+C {devices/lab_pin.sym} 1700 -1180 0 0 {name=lbRrefEA sig_type=std_logic lab=VSS}
 C {devices/lab_pin.sym} 1830 -1060 1 0 {name=lrrefeam sig_type=std_logic lab=IREF_EA}
 C {symbols/nfet_05v0.sym} 1740 -1060 2 0 {name=MREFEA
 L=0.6u
@@ -315,24 +318,26 @@ sa=0 sb=0 sd=0
 model=pfet_05v0
 spiceprefix=X
 }
-C {devices/capa.sym} 3330 -920 3 0 {name=Cc
-m=1
-value=3p
-footprint=1206
-device="ceramic capacitor"
-}
-C {devices/res.sym} 3410 -860 0 0 {name=R1
-value=175k
-footprint=1206
-device=resistor
-m=1
-}
-C {devices/res.sym} 3410 -740 0 0 {name=R2
-value=100k
-footprint=1206
-device=resistor
-m=1
-}
+C {symbols/cap_mim_2f0fF.sym} 3330 -920 3 0 {name=Cc
+W=38.6e-6
+L=38.6e-6
+model=cap_mim_2f0fF
+spiceprefix=X
+m=1}
+C {symbols/ppolyf_u_2k_6p0.sym} 3410 -860 0 0 {name=R1
+W=2e-6
+L=171.40e-6
+model=ppolyf_u_2k_6p0
+spiceprefix=X
+m=1}
+C {devices/lab_pin.sym} 3390 -860 0 0 {name=lbR1 sig_type=std_logic lab=VSS}
+C {symbols/ppolyf_u_2k_6p0.sym} 3410 -740 0 0 {name=R2
+W=2e-6
+L=97.85e-6
+model=ppolyf_u_2k_6p0
+spiceprefix=X
+m=1}
+C {devices/lab_pin.sym} 3390 -740 0 0 {name=lbR2 sig_type=std_logic lab=VSS}
 C {devices/lab_pin.sym} 1970 -870 2 0 {name=lfb sig_type=std_logic lab=FB}
 C {symbols/pfet_05v0.sym} 2650 -970 2 0 {name=MCASC1
 L=0.55u

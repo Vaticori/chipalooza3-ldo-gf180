@@ -182,7 +182,8 @@ def typical():
 
 
 # ------------------------------------------------------------------ corners
-CORNERS = ["typical", "ff", "ss", "fs", "sf"]
+CORNERS = ["typical", "ff", "ss", "fs", "sf"]      # MOS corners
+RES_CORNERS = ["typical", "ff", "ss"]               # poly resistor + MIM cap corners
 TEMPS = [-40, 27, 110]
 CORNER_TBS = ["tb_iq", "tb_line_reg", "tb_load_reg", "tb_dropout", "tb_psrr"]
 
@@ -191,14 +192,15 @@ def corners():
     rows = []
     for tb in CORNER_TBS:
         netlist(tb)
-    for c in CORNERS:
-        for t in TEMPS:
-            row = {"corner": c, "temp": t}
+    for c, rc, t in [(c, rc, t) for c in CORNERS for rc in RES_CORNERS for t in TEMPS]:
+            row = {"corner": c, "res": rc, "temp": t}
             for tb in CORNER_TBS:
                 src = (RUN / f"{tb}.spice").read_text()
                 src = re.sub(r"(sm141064\.ngspice) typical", rf"\1 {c}", src)
+                src = src.replace("sm141064.ngspice res_typical", f"sm141064.ngspice res_{rc}")
+                src = src.replace("sm141064.ngspice mimcap_typical", f"sm141064.ngspice mimcap_{rc}")
                 src = src.replace(".control", f".temp {t}\n.control", 1)
-                tag = f"{tb}_{c}_{t}"
+                tag = f"{tb}_{c}_{rc}_{t}"
                 src = src.replace(f"{tb}.raw", f"{tag}.raw").replace(f"{tb}.txt", f"{tag}.txt")
                 (RUN / f"{tag}.spice").write_text(src)
                 row.update(simulate(RUN / f"{tag}.spice", tag))
@@ -207,7 +209,7 @@ def corners():
                 if tb == "tb_load_reg":
                     d = load(tag)
                     row["vout_5mA"] = float(np.interp(5e-3, d[:, 0], d[:, 1]))
-            print(f"  {c:8s} {t:4d}C  VOUT {row['vout_5mA']:.4f} V  Iq {row['iq_uA']:.1f} uA  "
+            print(f"  {c:8s} R/C {rc:8s} {t:4d}C  VOUT {row['vout_5mA']:.4f} V  Iq {row['iq_uA']:.1f} uA  "
                   f"dropout {row['dropout_mV']:.0f} mV  PSRR {row['psrr_100Hz_dB']:.1f} dB", flush=True)
             rows.append(row)
     return rows
@@ -258,12 +260,14 @@ def write_summary(r, rows):
             "",
             "## Process corners x temperature (VIN = 5.0 V)",
             "",
-            "| Corner | Temp (C) | VOUT @5 mA (V) | Iq (uA) | Line reg (%) | Load reg (%) | Dropout @10 mA (mV) | PSRR @100 Hz (dB) |",
-            "|---|---|---|---|---|---|---|---|",
+            "MOS corners tt/ff/ss/fs/sf x poly-resistor and MIM-capacitor corners typical/ff/ss x -40/27/110 C.",
+            "",
+            "| MOS corner | R/C corner | Temp (C) | VOUT @5 mA (V) | Iq (uA) | Line reg (%) | Load reg (%) | Dropout @10 mA (mV) | PSRR @100 Hz (dB) |",
+            "|---|---|---|---|---|---|---|---|---|",
         ]
         for w in rows:
             lines.append(
-                f"| {w['corner']} | {w['temp']} | {w['vout_5mA']:.4f} {'' if S['vout_min'] <= w['vout_5mA'] <= S['vout_max'] else '**FAIL**'} | "
+                f"| {w['corner']} | {w['res']} | {w['temp']} | {w['vout_5mA']:.4f} {'' if S['vout_min'] <= w['vout_5mA'] <= S['vout_max'] else '**FAIL**'} | "
                 f"{w['iq_uA']:.1f} {'' if w['iq_uA'] <= S['iq_max_uA'] else '**FAIL**'} | "
                 f"{w['line_reg_pct']:.3f} {'' if w['line_reg_pct'] <= S['line_reg_max_pct'] else '**FAIL**'} | "
                 f"{w['load_reg_pct']:.3f} {'' if w['load_reg_pct'] <= S['load_reg_max_pct'] else '**FAIL**'} | "
