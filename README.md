@@ -152,7 +152,3 @@ in this repository or in the PDK via `$PDK_ROOT`.
 - Load-step overshoot (+312 mV for a 0-10 mA step in 1 us) is not yet
   specified; decide on a transient spec or reduce it.
 - Layout in the harness slot (template TBD), DRC/LVS, post-layout PVT.
-
-## 11. License
-
-Apache License 2.0, see [LICENSE](LICENSE).

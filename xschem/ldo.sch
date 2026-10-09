@@ -5,6 +5,7 @@ V {}
 S {}
 F {}
 E {}
+T {EN level shifter: 3.3V logic -> VIN domain} 2500 -1580 0 0 0.3 0.3 {}
 N 1750 -720 1890 -720 {lab=IREF_FB}
 N 2980 -1070 2980 -1000 {lab=CASCB2}
 N 2630 -1070 2630 -1000 {lab=CASCB1}
@@ -25,9 +26,6 @@ N 1720 -1090 1760 -1090 {lab=IREF_EA}
 N 2670 -970 2940 -970 {lab=EAREF}
 N 2630 -920 2700 -920 {lab=EAREF}
 N 2700 -970 2700 -920 {lab=EAREF}
-N 3340 -1460 3340 -1410 {lab=ENB_5V}
-N 3260 -1490 3300 -1490 {lab=EN_5V}
-N 3260 -1490 3260 -1380 {lab=EN_5V}
 N 3020 -860 3060 -860 {lab=VREF}
 N 3060 -860 3090 -860 {lab=VREF}
 N 1760 -1060 1900 -1060 {lab=IREF_EA}
@@ -55,14 +53,10 @@ N 3410 -920 3620 -920 {lab=VOUT}
 N 3250 -980 3250 -920 {lab=EAOUT}
 N 3200 -1380 3300 -1380 {lab=EN_5V}
 N 3160 -1520 3160 -1410 {lab=VIN}
-N 3160 -1520 3340 -1520 {lab=VIN}
 N 3180 -920 3250 -920 {lab=EAOUT}
 N 3250 -1040 3250 -980 {lab=EAOUT}
 N 3410 -1010 3410 -950 {lab=VOUT}
 N 3160 -1350 3160 -920 {lab=EAOUT}
-N 3030 -1460 3260 -1460 {lab=EN_5V}
-N 3040 -1430 3340 -1430 {lab=ENB_5V}
-N 3030 -1430 3040 -1430 {lab=ENB_5V}
 N 3620 -920 3790 -920 {lab=VOUT}
 C {devices/title.sym} 160 90 0 0 {name=l1 author="Capless LDO, 5.0V to 3.3V (GF180MCU)"}
 C {symbols/ppolyf_u_2k_6p0.sym} 2500 -740 0 0 {name=Rref
@@ -100,8 +94,7 @@ sa=0 sb=0 sd=0
 model=nfet_05v0
 spiceprefix=X
 }
-C {devices/lab_pin.sym} 3030 -1430 0 0 {name=lenvnd sig_type=std_logic lab=ENB_5V}
-C {devices/lab_pin.sym} 3030 -1460 0 0 {name=lenvng sig_type=std_logic lab=EN_5V}
+C {devices/lab_pin.sym} 3300 -1380 2 0 {name=lenvng sig_type=std_logic lab=EN_5V}
 C {symbols/pfet_05v0.sym} 3180 -1380 2 0 {name=MENPASSOFF
 L=0.6u
 W=5u
@@ -410,5 +403,4 @@ C {devices/lab_pin.sym} 2500 -1500 0 0 {name=lls1 sig_type=std_logic lab=VIN}
 C {devices/lab_pin.sym} 2800 -1520 2 0 {name=lls2 sig_type=std_logic lab=EN_5V}
 C {devices/lab_pin.sym} 2800 -1500 2 0 {name=lls3 sig_type=std_logic lab=ENB_5V}
 C {devices/lab_pin.sym} 2800 -1480 2 0 {name=lls4 sig_type=std_logic lab=VSS}
-T {EN level shifter: 3.3V logic -> VIN domain} 2500 -1580 0 0 0.3 0.3 {}
 C {devices/lab_pin.sym} 3160 -1520 0 0 {name=lenpassvin sig_type=std_logic lab=VIN}
